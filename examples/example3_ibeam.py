@@ -3,6 +3,13 @@
 演示工字形截面（H型钢）梁的分析
 """
 
+import sys
+import os
+
+# 添加项目根目录到Python路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
 from beam_toolkit import (
     Beam,
     IBeamSection,
@@ -37,10 +44,10 @@ def main():
     print(f"    b = {section.b*1000:.0f} mm")
     print(f"    tw = {section.tw*1000:.0f} mm")
     print(f"    tf = {section.tf*1000:.0f} mm")
-    print(f"  截面面积: {section.get_area()*1e6:.0f} mm²")
-    print(f"  惯性矩(Iz): {section.get_moment_of_inertia('z')*1e12:.0f} mm⁴")
-    print(f"  惯性矩(Iy): {section.get_moment_of_inertia('y')*1e12:.0f} mm⁴")
-    print(f"  强轴截面模量: {section.get_section_modulus('z')*1e9:.0f} mm³")
+    print(f"  截面面积: {section.get_area()*1e6:.0f} mm^2")
+    print(f"  惯性矩(Iz): {section.get_moment_of_inertia('z')*1e12:.0f} mm^4")
+    print(f"  惯性矩(Iy): {section.get_moment_of_inertia('y')*1e12:.0f} mm^4")
+    print(f"  强轴截面模量: {section.get_section_modulus('z')*1e9:.0f} mm^3")
     print()
 
     # 创建材料（Q420钢材）
@@ -58,7 +65,7 @@ def main():
         name="工字形截面梁"
     )
     print(f"  梁长度: {beam.length} m")
-    print(f"  抗弯刚度 EI: {beam.get_stiffness():.2e} N·m²")
+    print(f"  抗弯刚度 EI: {beam.get_stiffness():.2e} N·m^2")
     print()
 
     # 添加支撑（两端简支）
@@ -104,7 +111,7 @@ def main():
     print(f"  安全系数: {safety['bending_safety_factor']:.2f}")
     print(f"  最大挠度: {safety['max_deflection']*1000:.4f} mm")
     print(f"  挠度限值: {safety['deflection_limit']*1000:.2f} mm (L/250)")
-    print(f"  挠度检查: {'满足 ✓' if safety['deflection_safe'] else '不满足 ✗'}")
+    print(f"  挠度检查: {'满足 [OK]' if safety['deflection_safe'] else '不满足 [FAIL]'}")
     print()
 
     # 生成报告
@@ -123,11 +130,11 @@ def main():
         tf=0.015,   # 翼缘厚度 15mm
         name="T形截面"
     )
-    print(f"  截面面积: {t_section.get_area()*1e6:.0f} mm²")
-    print(f"  惯性矩: {t_section.get_moment_of_inertia()*1e12:.0f} mm⁴")
+    print(f"  截面面积: {t_section.get_area()*1e6:.0f} mm^2")
+    print(f"  惯性矩: {t_section.get_moment_of_inertia()*1e12:.0f} mm^4")
     print(f"  中性轴位置: {t_section.y_neutral_axis*1000:.1f} mm（从底部起）")
-    print(f"  上边缘截面模量: {t_section.get_section_modulus_top()*1e9:.0f} mm³")
-    print(f"  下边缘截面模量: {t_section.get_section_modulus_bottom()*1e9:.0f} mm³")
+    print(f"  上边缘截面模量: {t_section.get_section_modulus_top()*1e9:.0f} mm^3")
+    print(f"  下边缘截面模量: {t_section.get_section_modulus_bottom()*1e9:.0f} mm^3")
 
 
 if __name__ == '__main__':

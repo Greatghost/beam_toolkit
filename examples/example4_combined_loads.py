@@ -3,6 +3,13 @@
 演示梁在多种荷载组合作用下的分析
 """
 
+import sys
+import os
+
+# 添加项目根目录到Python路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
 from beam_toolkit import (
     Beam,
     RectangleSection,
@@ -107,7 +114,7 @@ def main():
     safety = beam.check_safety()
     print(f"  最大弯曲应力: {safety['max_bending_stress']/1e6:.2f} MPa")
     print(f"  许用应力: {safety['allowable_stress']/1e6:.2f} MPa (混凝土抗压强度/{safety['bending_safety_factor']})")
-    print(f"  安全状态: {'安全 ✓' if safety['is_safe'] else '不安全 ✗'}")
+    print(f"  安全状态: {'安全 [OK]' if safety['is_safe'] else '不安全 [FAIL]'}")
     print()
 
     # 可视化

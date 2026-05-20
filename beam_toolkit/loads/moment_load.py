@@ -12,7 +12,7 @@ class MomentLoad(Load):
 
     参数:
         position: 作用位置 (m)
-        magnitude: 弯矩大小 (N·m)，正值表示顺时针（通常使梁上表面受拉）
+        magnitude: 弯矩大小 (N*m)，正值表示顺时针（通常使梁上表面受拉）
         direction: 弯矩方向（可选）
     """
 
@@ -28,7 +28,7 @@ class MomentLoad(Load):
 
         Args:
             position: 作用位置（从梁左端算起）(m)
-            magnitude: 弯矩大小 (N·m)
+            magnitude: 弯矩大小 (N*m)
             direction: 'clockwise' 顺时针（默认）或 'counterclockwise' 逆时针
             name: 荷载名称（可选）
         """
@@ -74,7 +74,7 @@ class MomentLoad(Load):
         获取总弯矩值
 
         Returns:
-            总弯矩值 (N·m)
+            总弯矩值 (N*m)
         """
         return self.magnitude
 
@@ -101,7 +101,7 @@ class MomentLoad(Load):
         获取弯矩大小（绝对值）
 
         Returns:
-            弯矩大小 (N·m)
+            弯矩大小 (N*m)
         """
         return self._magnitude
 
@@ -116,8 +116,8 @@ class MomentLoad(Load):
 
     def __repr__(self) -> str:
         direction_symbol = '↻' if self.is_clockwise() else '↺'
-        return f"MomentLoad({self.position:.2f}m, {self._magnitude:.2f}N·m{direction_symbol})"
+        return f"MomentLoad({self.position:.2f}m, {self._magnitude:.2f}N*m{direction_symbol})"
 
     def __str__(self) -> str:
         direction_str = '顺时针' if self.is_clockwise() else '逆时针'
-        return f"集中弯矩 @ {self.position:.2f}m, {self._magnitude:.2f}N·m {direction_str}"
+        return f"集中弯矩 @ {self.position:.2f}m, {self._magnitude:.2f}N*m {direction_str}"

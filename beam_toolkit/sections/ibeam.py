@@ -47,7 +47,7 @@ class IBeamSection(Section):
         计算截面面积
 
         Returns:
-            截面面积 A = 2 × b × tf + tw × (h - 2×tf) (m²)
+            截面面积 A = 2 × b × tf + tw × (h - 2×tf) (m^2)
         """
         area_flanges = 2 * self.b * self.tf
         area_web = self.tw * self.hw
@@ -62,7 +62,7 @@ class IBeamSection(Section):
                   'y' 弱轴（绕翼缘方向弯曲）
 
         Returns:
-            惯性矩 (m⁴)
+            惯性矩 (m^4)
         """
         if axis == 'z':
             # 强轴惯性矩
@@ -95,7 +95,7 @@ class IBeamSection(Section):
             axis: 轴向
 
         Returns:
-            截面模量 W = I / y_max (m³)
+            截面模量 W = I / y_max (m^3)
         """
         I = self.get_moment_of_inertia(axis)
         if axis == 'z':
@@ -135,7 +135,7 @@ class IBeamSection(Section):
         计算腹板面积
 
         Returns:
-            腹板面积 (m²)
+            腹板面积 (m^2)
         """
         return self.tw * self.hw
 
@@ -144,7 +144,7 @@ class IBeamSection(Section):
         计算单个翼缘面积
 
         Returns:
-            单个翼缘面积 (m²)
+            单个翼缘面积 (m^2)
         """
         return self.b * self.tf
 
@@ -158,7 +158,7 @@ class IBeamSection(Section):
             axis: 轴向
 
         Returns:
-            有效剪切面积 (m²)
+            有效剪切面积 (m^2)
         """
         if axis == 'z':
             # 强轴弯曲时，剪力主要由腹板承担

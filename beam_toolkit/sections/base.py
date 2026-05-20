@@ -30,7 +30,7 @@ class Section(ABC):
         计算截面面积
 
         Returns:
-            截面面积 (m²)
+            截面面积 (m^2)
         """
         pass
 
@@ -43,7 +43,7 @@ class Section(ABC):
             axis: 轴向 ('z' 表示绕z轴，即绕强轴弯曲)
 
         Returns:
-            惯性矩 (m⁴)
+            惯性矩 (m^4)
         """
         pass
 
@@ -56,7 +56,7 @@ class Section(ABC):
             axis: 轴向
 
         Returns:
-            截面模量 (m³)
+            截面模量 (m^3)
         """
         pass
 
@@ -100,4 +100,4 @@ class Section(ABC):
         return f"{self.name}({dim_str})"
 
     def __str__(self) -> str:
-        return f"{self.name}: A={self.get_area():.6f}m², I={self.get_moment_of_inertia():.9f}m⁴"
+        return f"{self.name}: A={self.get_area():.6f}m^2, I={self.get_moment_of_inertia():.9f}m^4"

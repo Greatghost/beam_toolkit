@@ -3,6 +3,13 @@
 演示悬臂梁的分析过程
 """
 
+import sys
+import os
+
+# 添加项目根目录到Python路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
 from beam_toolkit import (
     Beam,
     CircleSection,
@@ -25,8 +32,8 @@ def main():
     print("创建截面...")
     section = CircleSection(diameter=0.15)
     print(f"  直径: {section.diameter:.3f} m")
-    print(f"  面积: {section.get_area():.6f} m²")
-    print(f"  惯性矩: {section.get_moment_of_inertia():.9f} m⁴")
+    print(f"  面积: {section.get_area():.6f} m^2")
+    print(f"  惯性矩: {section.get_moment_of_inertia():.9f} m^4")
     print()
 
     # 创建材料（铝合金6061-T6）
@@ -44,7 +51,7 @@ def main():
         name="悬臂梁示例"
     )
     print(f"  梁长度: {beam.length} m")
-    print(f"  抗弯刚度 EI: {beam.get_stiffness():.2e} N·m²")
+    print(f"  抗弯刚度 EI: {beam.get_stiffness():.2e} N·m^2")
     print()
 
     # 添加支撑
@@ -85,7 +92,7 @@ def main():
     print(f"  最大弯矩: {max_M/1000:.2f} kN·m @ {pos_M:.2f} m")
     print(f"  最大剪力: {max_V/1000:.2f} kN @ {pos_V:.2f} m")
     print(f"  最大挠度: {max_v*1000:.4f} mm @ {pos_v:.2f} m")
-    print(f"  相对挠度: {max_v/beam.length*1000:.4f} ‰L")
+    print(f"  相对挠度: {max_v/beam.length*1000:.4f} /1000L")
     print()
 
     # 安全性检查
@@ -96,7 +103,7 @@ def main():
     print(f"  最大弯曲应力: {safety['max_bending_stress']/1e6:.2f} MPa")
     print(f"  许用应力: {safety['allowable_stress']/1e6:.2f} MPa")
     print(f"  安全系数: {safety['bending_safety_factor']:.2f}")
-    print(f"  安全状态: {'安全 ✓' if safety['is_safe'] else '不安全 ✗'}")
+    print(f"  安全状态: {'安全 [OK]' if safety['is_safe'] else '不安全 [FAIL]'}")
     print()
 
     # 可视化

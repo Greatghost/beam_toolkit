@@ -36,7 +36,7 @@ class RectangleSection(Section):
         计算截面面积
 
         Returns:
-            截面面积 A = b × h (m²)
+            截面面积 A = b × h (m^2)
         """
         return self.width * self.height
 
@@ -49,7 +49,7 @@ class RectangleSection(Section):
                   'y' 表示绕y轴（弱轴，绕高度方向弯曲）
 
         Returns:
-            惯性矩 (m⁴)
+            惯性矩 (m^4)
         """
         if axis == 'z':
             # 绕z轴弯曲，中性轴平行于宽度
@@ -66,7 +66,7 @@ class RectangleSection(Section):
             axis: 轴向
 
         Returns:
-            截面模量 W = I / (h/2) (m³)
+            截面模量 W = I / (h/2) (m^3)
         """
         I = self.get_moment_of_inertia(axis)
         if axis == 'z':
@@ -116,7 +116,7 @@ class RectangleSection(Section):
             axis: 轴向
 
         Returns:
-            有效剪切面积 (m²)
+            有效剪切面积 (m^2)
         """
         if axis == 'z':
             # 对于矩形截面，剪切面积约为截面积的5/6

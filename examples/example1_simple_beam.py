@@ -3,6 +3,13 @@
 演示简支梁在集中力和均布荷载作用下的分析
 """
 
+import sys
+import os
+
+# 添加项目根目录到Python路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
 from beam_toolkit import (
     Beam,
     RectangleSection,
@@ -23,9 +30,9 @@ def main():
     # 创建截面（矩形截面：宽0.3m，高0.5m）
     print("创建截面...")
     section = RectangleSection(width=0.3, height=0.5)
-    print(f"  截面面积: {section.get_area():.6f} m²")
-    print(f"  惯性矩: {section.get_moment_of_inertia():.9f} m⁴")
-    print(f"  截面模量: {section.get_section_modulus():.6f} m³")
+    print(f"  截面面积: {section.get_area():.6f} m^2")
+    print(f"  惯性矩: {section.get_moment_of_inertia():.9f} m^4")
+    print(f"  截面模量: {section.get_section_modulus():.6f} m^3")
     print()
 
     # 创建材料（Q345钢材）
@@ -43,7 +50,7 @@ def main():
         name="简支梁示例"
     )
     print(f"  梁长度: {beam.length} m")
-    print(f"  抗弯刚度 EI: {beam.get_stiffness():.2e} N·m²")
+    print(f"  抗弯刚度 EI: {beam.get_stiffness():.2e} N·m^2")
     print()
 
     # 添加支撑（两端简支）
@@ -80,7 +87,7 @@ def main():
     print(f"  最大弯曲应力: {safety['max_bending_stress']/1e6:.2f} MPa")
     print(f"  许用应力: {safety['allowable_stress']/1e6:.2f} MPa")
     print(f"  安全系数: {safety['bending_safety_factor']:.2f}")
-    print(f"  安全状态: {'安全 ✓' if safety['is_safe'] else '不安全 ✗'}")
+    print(f"  安全状态: {'安全 [OK]' if safety['is_safe'] else '不安全 [FAIL]'}")
     print()
 
     # 可视化

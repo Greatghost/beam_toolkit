@@ -189,15 +189,13 @@ class BeamVisualizer:
             if support_type == 'fixed':
                 # 固定端：绘制固定符号
                 ax.plot([pos, pos], [-0.3, 0], 'k-', linewidth=2)
-                # 绘制固定端三角形
-                triangle = patches.RegularPolygon((pos, -0.15), 3, 0.15, orientation=np.pi)
-                ax.add_patch(patches.Patch(triangle.get_path().transformed(triangle.get_transform()),
+                # 绘制固定端三角形（简化绘制）
+                ax.add_patch(patches.Polygon([(pos-0.1, -0.3), (pos+0.1, -0.3), (pos, -0.15)],
                                           facecolor='gray', edgecolor='k'))
 
             elif support_type == 'simple':
                 # 简支：绘制三角形支撑
-                triangle = patches.RegularPolygon((pos, -0.15), 3, 0.12, orientation=np.pi/6)
-                ax.add_patch(patches.Patch(triangle.get_path().transformed(triangle.get_transform()),
+                ax.add_patch(patches.Polygon([(pos-0.08, -0.25), (pos+0.08, -0.25), (pos, -0.15)],
                                           facecolor='white', edgecolor='k'))
 
             elif support_type == 'free':
@@ -249,7 +247,7 @@ class BeamVisualizer:
                 ax.annotate('', xy=(pos + 0.2, 0.3), xytext=(pos - 0.2, 0.3),
                            arrowprops=dict(arrowstyle='->', color='purple', lw=2,
                                           connectionstyle='arc3,rad=0.3'))
-                ax.text(pos, 0.45, f'{abs(load.get_total_load())/1000:.1f}kN·m',
+                ax.text(pos, 0.45, f'{abs(load.get_total_load())/1000:.1f}kN*m',
                        ha='center', fontsize=8, color='purple')
 
         # 设置图形属性
@@ -290,7 +288,7 @@ class BeamVisualizer:
         # 标注最大弯矩
         max_M, pos_M = self.beam.get_max_bending_moment()
         ax.plot(pos_M, max_M / 1000, 'ko', markersize=8)
-        ax.annotate(f'M_max = {max_M/1000:.2f}kN·m', xy=(pos_M, max_M/1000),
+        ax.annotate(f'M_max = {max_M/1000:.2f}kN*m', xy=(pos_M, max_M/1000),
                    xytext=(pos_M + 0.5, max_M/1000 * 1.1),
                    arrowprops=dict(arrowstyle='->', color='k'), fontsize=10)
 
@@ -299,7 +297,7 @@ class BeamVisualizer:
 
         # 设置图形属性
         ax.set_xlabel('位置 x (m)')
-        ax.set_ylabel('弯矩 M (kN·m)')
+        ax.set_ylabel('弯矩 M (kN*m)')
         ax.set_title('弯矩图')
         ax.grid(True, alpha=0.3)
         ax.legend(loc='upper right')
@@ -538,14 +536,14 @@ class BeamVisualizer:
                 if 'vertical_reaction' in value:
                     report_lines.append(f"  {key} @ {pos:.2f}m: R_v = {value['vertical_reaction']/1000:.2f} kN")
                 if 'moment_reaction' in value:
-                    report_lines.append(f"  {key} @ {pos:.2f}m: M = {value['moment_reaction']/1000:.2f} kN·m")
+                    report_lines.append(f"  {key} @ {pos:.2f}m: M = {value['moment_reaction']/1000:.2f} kN*m")
 
         report_lines.extend([
             "",
             "=" * 60,
             "最大值",
             "=" * 60,
-            f"  最大弯矩: {self.beam.get_max_bending_moment()[0]/1000:.2f} kN·m",
+            f"  最大弯矩: {self.beam.get_max_bending_moment()[0]/1000:.2f} kN*m",
             f"  最大剪力: {self.beam.get_max_shear_force()[0]/1000:.2f} kN",
             f"  最大挠度: {self.beam.get_max_deflection()[0]*1000:.4f} mm",
             "",

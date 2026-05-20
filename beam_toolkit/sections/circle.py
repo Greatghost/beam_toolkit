@@ -48,7 +48,7 @@ class CircleSection(Section):
         计算截面面积
 
         Returns:
-            截面面积 A = π × r² (m²)
+            截面面积 A = π × r² (m^2)
         """
         return np.pi * self.radius ** 2
 
@@ -62,7 +62,7 @@ class CircleSection(Section):
             axis: 轴向（对圆形截面无影响）
 
         Returns:
-            惯性矩 I = π × d⁴ / 64 (m⁴)
+            惯性矩 I = π × d⁴ / 64 (m^4)
         """
         return np.pi * self.diameter ** 4 / 64
 
@@ -74,7 +74,7 @@ class CircleSection(Section):
             axis: 轴向（对圆形截面无影响）
 
         Returns:
-            截面模量 W = π × d³ / 32 (m³)
+            截面模量 W = π × d³ / 32 (m^3)
         """
         return np.pi * self.diameter ** 3 / 32
 
@@ -106,7 +106,7 @@ class CircleSection(Section):
         计算极惯性矩（用于扭转分析）
 
         Returns:
-            极惯性矩 J = π × d⁴ / 32 (m⁴)
+            极惯性矩 J = π × d⁴ / 32 (m^4)
         """
         return np.pi * self.diameter ** 4 / 32
 
@@ -127,7 +127,7 @@ class CircleSection(Section):
             axis: 轴向（对圆形截面无影响）
 
         Returns:
-            有效剪切面积 (m²)
+            有效剪切面积 (m^2)
         """
         # 对于圆形截面，剪切面积约为截面积的9/10
         return self.get_area() * 9 / 10

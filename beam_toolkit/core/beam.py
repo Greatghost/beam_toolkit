@@ -129,7 +129,7 @@ class Beam:
         获取梁的抗弯刚度 EI
 
         Returns:
-            抗弯刚度 EI (N·m²)
+            抗弯刚度 EI (N*m^2)
         """
         E = self.material.get_elastic_modulus()
         I = self.section.get_moment_of_inertia()
@@ -268,7 +268,7 @@ class Beam:
         获取最大弯矩及其位置
 
         Returns:
-            (最大弯矩绝对值, 位置) (N·m, m)
+            (最大弯矩绝对值, 位置) (N*m, m)
         """
         if not self._solved:
             self.solve()
@@ -371,7 +371,7 @@ class Beam:
             f"长度: {self.length:.3f} m",
             f"截面: {self.section}",
             f"材料: {self.material}",
-            f"抗弯刚度 EI: {self.get_stiffness():.2e} N·m²",
+            f"抗弯刚度 EI: {self.get_stiffness():.2e} N*m^2",
             f"梁类型: {self.get_beam_type()}",
             f"荷载数量: {len(self.loads)}",
             f"支撑数量: {len(self.supports)}",
@@ -385,9 +385,9 @@ class Beam:
             info_lines.extend([
                 f"",
                 f"=== 计算结果 ===",
-                f"最大弯矩: {max_M:.2f} N·m @ {pos_M:.2f} m",
+                f"最大弯矩: {max_M:.2f} N*m @ {pos_M:.2f} m",
                 f"最大剪力: {max_V:.2f} N @ {pos_V:.2f} m",
-                f"最大挠度: {max_v:.6f} m ({max_v/self.length*1000:.4f}‰L) @ {pos_v:.2f} m",
+                f"最大挠度: {max_v:.6f} m ({max_v/self.length*1000:.4f}/1000L) @ {pos_v:.2f} m",
             ])
 
             safety = self.check_safety()

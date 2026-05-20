@@ -53,7 +53,7 @@ class Load(ABC):
         获取总荷载值
 
         Returns:
-            总荷载值（N 或 N·m）
+            总荷载值（N 或 N*m）
         """
         pass
 

@@ -17,43 +17,43 @@ class Steel(Material):
     TYPES = {
         'Q235': {
             'E': 206e9,  # 206 GPa
-            'σ_y': 235e6,  # 235 MPa
-            'σ_u': 375e6,  # 375 MPa
-            'ρ': 7850,  # 7850 kg/m³
-            'ν': 0.3,
-            'α': 12e-6,  # 12×10⁻⁶ /°C
+            'sigma_y': 235e6,  # 235 MPa
+            'sigma_u': 375e6,  # 375 MPa
+            'rho': 7850,  # 7850 kg/m^3
+            'poisson': 0.3,
+            'alpha': 12e-6,  # 12×10⁻⁶ /°C
         },
         'Q345': {
             'E': 206e9,
-            'σ_y': 345e6,
-            'σ_u': 470e6,
-            'ρ': 7850,
-            'ν': 0.3,
-            'α': 12e-6,
+            'sigma_y': 345e6,
+            'sigma_u': 470e6,
+            'rho': 7850,
+            'poisson': 0.3,
+            'alpha': 12e-6,
         },
         'Q420': {
             'E': 206e9,
-            'σ_y': 420e6,
-            'σ_u': 520e6,
-            'ρ': 7850,
-            'ν': 0.3,
-            'α': 12e-6,
+            'sigma_y': 420e6,
+            'sigma_u': 520e6,
+            'rho': 7850,
+            'poisson': 0.3,
+            'alpha': 12e-6,
         },
         'A36': {
             'E': 200e9,
-            'σ_y': 250e6,
-            'σ_u': 400e6,
-            'ρ': 7850,
-            'ν': 0.3,
-            'α': 11.7e-6,
+            'sigma_y': 250e6,
+            'sigma_u': 400e6,
+            'rho': 7850,
+            'poisson': 0.3,
+            'alpha': 11.7e-6,
         },
         'SS304': {
             'E': 193e9,
-            'σ_y': 205e6,
-            'σ_u': 515e6,
-            'ρ': 8000,
-            'ν': 0.3,
-            'α': 17.2e-6,
+            'sigma_y': 205e6,
+            'sigma_u': 515e6,
+            'rho': 8000,
+            'poisson': 0.3,
+            'alpha': 17.2e-6,
         },
     }
 
@@ -69,16 +69,16 @@ class Steel(Material):
             raise ValueError(f"不支持的钢材类型: {steel_type}。可用类型: {list(self.TYPES.keys())}")
 
         params = self.TYPES[steel_type]
-        allowable = params['σ_y'] / safety_factor
+        allowable = params['sigma_y'] / safety_factor
 
         super().__init__(
             name=f"钢材{steel_type}",
             elastic_modulus=params['E'],
-            yield_strength=params['σ_y'],
-            ultimate_strength=params['σ_u'],
-            density=params['ρ'],
-            poisson_ratio=params['ν'],
-            thermal_expansion=params['α'],
+            yield_strength=params['sigma_y'],
+            ultimate_strength=params['sigma_u'],
+            density=params['rho'],
+            poisson_ratio=params['poisson'],
+            thermal_expansion=params['alpha'],
             allowable_stress=allowable,
         )
 
@@ -97,38 +97,38 @@ class Concrete(Material):
     TYPES = {
         'C25': {
             'E': 28e9,  # 28 GPa
-            'σ_c': 25e6,  # 25 MPa (抗压强度)
-            'σ_t': 1.78e6,  # 抗拉强度
-            'ρ': 2400,
-            'ν': 0.2,
+            'sigma_c': 25e6,  # 25 MPa (抗压强度)
+            'sigma_t': 1.78e6,  # 抗拉强度
+            'rho': 2400,
+            'poisson': 0.2,
         },
         'C30': {
             'E': 30e9,
-            'σ_c': 30e6,
-            'σ_t': 2.01e6,
-            'ρ': 2400,
-            'ν': 0.2,
+            'sigma_c': 30e6,
+            'sigma_t': 2.01e6,
+            'rho': 2400,
+            'poisson': 0.2,
         },
         'C35': {
             'E': 31.5e9,
-            'σ_c': 35e6,
-            'σ_t': 2.2e6,
-            'ρ': 2400,
-            'ν': 0.2,
+            'sigma_c': 35e6,
+            'sigma_t': 2.2e6,
+            'rho': 2400,
+            'poisson': 0.2,
         },
         'C40': {
             'E': 32.5e9,
-            'σ_c': 40e6,
-            'σ_t': 2.39e6,
-            'ρ': 2400,
-            'ν': 0.2,
+            'sigma_c': 40e6,
+            'sigma_t': 2.39e6,
+            'rho': 2400,
+            'poisson': 0.2,
         },
         'C50': {
             'E': 34.5e9,
-            'σ_c': 50e6,
-            'σ_t': 2.64e6,
-            'ρ': 2400,
-            'ν': 0.2,
+            'sigma_c': 50e6,
+            'sigma_t': 2.64e6,
+            'rho': 2400,
+            'poisson': 0.2,
         },
     }
 
@@ -144,20 +144,20 @@ class Concrete(Material):
             raise ValueError(f"不支持的混凝土类型: {concrete_type}。可用类型: {list(self.TYPES.keys())}")
 
         params = self.TYPES[concrete_type]
-        allowable_compressive = params['σ_c'] / safety_factor
+        allowable_compressive = params['sigma_c'] / safety_factor
 
         super().__init__(
             name=f"混凝土{concrete_type}",
             elastic_modulus=params['E'],
-            ultimate_strength=params['σ_c'],
-            density=params['ρ'],
-            poisson_ratio=params['ν'],
+            ultimate_strength=params['sigma_c'],
+            density=params['rho'],
+            poisson_ratio=params['poisson'],
             allowable_stress=allowable_compressive,
         )
 
         self.concrete_type = concrete_type
-        self.compressive_strength = params['σ_c']
-        self.tensile_strength = params['σ_t']
+        self.compressive_strength = params['sigma_c']
+        self.tensile_strength = params['sigma_t']
         self.safety_factor = safety_factor
 
 
@@ -172,27 +172,27 @@ class Aluminum(Material):
     TYPES = {
         '6061-T6': {
             'E': 68.9e9,  # 68.9 GPa
-            'σ_y': 276e6,  # 276 MPa
-            'σ_u': 310e6,  # 310 MPa
-            'ρ': 2700,
-            'ν': 0.33,
-            'α': 23.6e-6,
+            'sigma_y': 276e6,  # 276 MPa
+            'sigma_u': 310e6,  # 310 MPa
+            'rho': 2700,
+            'poisson': 0.33,
+            'alpha': 23.6e-6,
         },
         '7075-T6': {
             'E': 71.7e9,
-            'σ_y': 503e6,
-            'σ_u': 572e6,
-            'ρ': 2810,
-            'ν': 0.33,
-            'α': 23.4e-6,
+            'sigma_y': 503e6,
+            'sigma_u': 572e6,
+            'rho': 2810,
+            'poisson': 0.33,
+            'alpha': 23.4e-6,
         },
         '2024-T4': {
             'E': 73.1e9,
-            'σ_y': 324e6,
-            'σ_u': 469e6,
-            'ρ': 2770,
-            'ν': 0.33,
-            'α': 23.2e-6,
+            'sigma_y': 324e6,
+            'sigma_u': 469e6,
+            'rho': 2770,
+            'poisson': 0.33,
+            'alpha': 23.2e-6,
         },
     }
 
@@ -208,16 +208,16 @@ class Aluminum(Material):
             raise ValueError(f"不支持的铝合金类型: {aluminum_type}。可用类型: {list(self.TYPES.keys())}")
 
         params = self.TYPES[aluminum_type]
-        allowable = params['σ_y'] / safety_factor
+        allowable = params['sigma_y'] / safety_factor
 
         super().__init__(
             name=f"铝合金{aluminum_type}",
             elastic_modulus=params['E'],
-            yield_strength=params['σ_y'],
-            ultimate_strength=params['σ_u'],
-            density=params['ρ'],
-            poisson_ratio=params['ν'],
-            thermal_expansion=params['α'],
+            yield_strength=params['sigma_y'],
+            ultimate_strength=params['sigma_u'],
+            density=params['rho'],
+            poisson_ratio=params['poisson'],
+            thermal_expansion=params['alpha'],
             allowable_stress=allowable,
         )
 

@@ -71,7 +71,7 @@ class TBeamSection(Section):
         计算截面面积
 
         Returns:
-            截面面积 A = b × tf + tw × (h - tf) (m²)
+            截面面积 A = b × tf + tw × (h - tf) (m^2)
         """
         area_flange = self.b * self.tf
         area_web = self.tw * self.hw
@@ -85,7 +85,7 @@ class TBeamSection(Section):
             axis: 'z' 绕z轴弯曲
 
         Returns:
-            惯性矩 (m⁴)
+            惯性矩 (m^4)
         """
         if axis == 'z':
             # 翼缘对中性轴的惯性矩（移轴定理）
@@ -117,7 +117,7 @@ class TBeamSection(Section):
             axis: 轴向
 
         Returns:
-            较小的截面模量（保守设计）(m³)
+            较小的截面模量（保守设计）(m^3)
         """
         I = self.get_moment_of_inertia(axis)
         if axis == 'z':
@@ -132,7 +132,7 @@ class TBeamSection(Section):
         计算上边缘截面模量
 
         Returns:
-            上边缘截面模量 W_top = I / y_top (m³)
+            上边缘截面模量 W_top = I / y_top (m^3)
         """
         I = self.get_moment_of_inertia()
         return I / self.y_neutral_axis_from_top
@@ -142,7 +142,7 @@ class TBeamSection(Section):
         计算下边缘截面模量
 
         Returns:
-            下边缘截面模量 W_bottom = I / y_bottom (m³)
+            下边缘截面模量 W_bottom = I / y_bottom (m^3)
         """
         I = self.get_moment_of_inertia()
         return I / self.y_neutral_axis
@@ -176,7 +176,7 @@ class TBeamSection(Section):
         计算腹板面积
 
         Returns:
-            腹板面积 (m²)
+            腹板面积 (m^2)
         """
         return self.tw * self.hw
 
@@ -185,7 +185,7 @@ class TBeamSection(Section):
         计算翼缘面积
 
         Returns:
-            翼缘面积 (m²)
+            翼缘面积 (m^2)
         """
         return self.b * self.tf
 
@@ -197,7 +197,7 @@ class TBeamSection(Section):
             axis: 轴向
 
         Returns:
-            有效剪切面积 (m²)
+            有效剪切面积 (m^2)
         """
         if axis == 'z':
             return self.tw * self.hw

@@ -20,7 +20,7 @@ class Material(ABC):
         elastic_modulus: float,  # 弹性模量 E (Pa)
         yield_strength: Optional[float] = None,  # 屈服强度 (Pa)
         ultimate_strength: Optional[float] = None,  # 极限强度 (Pa)
-        density: Optional[float] = None,  # 密度 (kg/m³)
+        density: Optional[float] = None,  # 密度 (kg/m^3)
         poisson_ratio: float = 0.3,  # 泊松比
         shear_modulus: Optional[float] = None,  # 剪切模量 G (Pa)
         thermal_expansion: Optional[float] = None,  # 热膨胀系数 (1/°C)
@@ -34,9 +34,9 @@ class Material(ABC):
             elastic_modulus: 弹性模量 E (Pa)
             yield_strength: 屈服强度 (Pa)
             ultimate_strength: 极限强度 (Pa)
-            density: 密度 (kg/m³)
+            density: 密度 (kg/m^3)
             poisson_ratio: 泊松比（默认0.3）
-            shear_modulus: 剪切模量 G (Pa)，如果不提供则由 E 和 ν 计算
+            shear_modulus: 剪切模量 G (Pa)，如果不提供则由 E 和 poisson 计算
             thermal_expansion: 热膨胀系数 (1/°C)
             allowable_stress: 许用应力 (Pa)
         """
@@ -52,7 +52,7 @@ class Material(ABC):
         self.thermal_expansion = thermal_expansion
         self.allowable_stress = allowable_stress
 
-        # 剪切模量 G = E / (2(1+ν))
+        # 剪切模量 G = E / (2(1+poisson))
         if shear_modulus is not None:
             self.shear_modulus = shear_modulus
         else:
@@ -120,7 +120,7 @@ class Material(ABC):
         获取密度
 
         Returns:
-            密度 (kg/m³)，如果未定义返回None
+            密度 (kg/m^3)，如果未定义返回None
         """
         return self.density
 
@@ -158,15 +158,15 @@ class Material(ABC):
         info_lines = [f"材料: {self.name}"]
         info_lines.append(f"  弹性模量 E = {self.elastic_modulus/1e9:.2f} GPa")
         info_lines.append(f"  剪切模量 G = {self.shear_modulus/1e9:.2f} GPa")
-        info_lines.append(f"  泊松比 ν = {self.poisson_ratio:.3f}")
+        info_lines.append(f"  泊松比 poisson = {self.poisson_ratio:.3f}")
 
         if self.yield_strength:
-            info_lines.append(f"  屈服强度 σ_y = {self.yield_strength/1e6:.1f} MPa")
+            info_lines.append(f"  屈服强度 sigma_y = {self.yield_strength/1e6:.1f} MPa")
         if self.ultimate_strength:
-            info_lines.append(f"  极限强度 σ_u = {self.ultimate_strength/1e6:.1f} MPa")
+            info_lines.append(f"  极限强度 sigma_u = {self.ultimate_strength/1e6:.1f} MPa")
         if self.density:
-            info_lines.append(f"  密度 ρ = {self.density:.0f} kg/m³")
+            info_lines.append(f"  密度 rho = {self.density:.0f} kg/m^3")
         if self.thermal_expansion:
-            info_lines.append(f"  热膨胀系数 α = {self.thermal_expansion:.2e} /°C")
+            info_lines.append(f"  热膨胀系数 alpha = {self.thermal_expansion:.2e} /°C")
 
         return '\n'.join(info_lines)
