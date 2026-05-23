@@ -271,6 +271,10 @@ class BeamVisualizer:
         """
         绘制弯矩图
 
+        按照用户规则：
+        - 顺时针弯矩为正（y轴向下为正方向）
+        - 弯矩图y轴反向：上为负，下为正
+
         Args:
             ax: Axes对象
         """
@@ -278,33 +282,39 @@ class BeamVisualizer:
         x = results['position']
         M = results['moment']
 
-        # 绘制弯矩曲线
-        ax.plot(x, M / 1000, 'b-', linewidth=2, label='弯矩 M')
+        # 弯矩图绘制在受拉面，y轴反向（上负下正）
+        # 绘制弯矩曲线（正值向下）
+        ax.plot(x, -M / 1000, 'b-', linewidth=2, label='弯矩 M')
 
-        # 填充弯矩区域（正弯矩一种颜色，负弯矩另一种颜色）
-        ax.fill_between(x, 0, M / 1000, where=M >= 0, alpha=0.3, color='blue', label='正弯矩（下表面受拉）')
-        ax.fill_between(x, 0, M / 1000, where=M < 0, alpha=0.3, color='red', label='负弯矩（上表面受拉）')
+        # 填充弯矩区域
+        # 正弯矩（顺时针，上表面受拉）填在下方
+        # 负弯矩（逆时针，下表面受拉）填在上方
+        ax.fill_between(x, 0, -M / 1000, where=M >= 0, alpha=0.3, color='red', label='正弯矩(顺时针,上表面受拉)')
+        ax.fill_between(x, 0, -M / 1000, where=M < 0, alpha=0.3, color='blue', label='负弯矩(逆时针,下表面受拉)')
 
         # 标注最大弯矩
         max_M, pos_M = self.beam.get_max_bending_moment()
-        ax.plot(pos_M, max_M / 1000, 'ko', markersize=8)
-        ax.annotate(f'M_max = {max_M/1000:.2f}kN*m', xy=(pos_M, max_M/1000),
-                   xytext=(pos_M + 0.5, max_M/1000 * 1.1),
+        ax.plot(pos_M, -max_M / 1000, 'ko', markersize=8)
+        ax.annotate(f'M_max = {max_M/1000:.2f}kN*m', xy=(pos_M, -max_M/1000),
+                   xytext=(pos_M + 0.5, -max_M/1000 - 2),
                    arrowprops=dict(arrowstyle='->', color='k'), fontsize=10)
 
         # 绘制零点
         ax.axhline(y=0, color='k', linewidth=0.5)
 
+        # 反转y轴（上负下正）
+        ax.invert_yaxis()
+
         # 设置图形属性
         ax.set_xlabel('位置 x (m)')
         ax.set_ylabel('弯矩 M (kN*m)')
-        ax.set_title('弯矩图')
+        ax.set_title('弯矩图 (顺时针为正，y轴上负下正)')
         ax.grid(True, alpha=0.3)
         ax.legend(loc='upper right')
 
         # 标注弯矩方向说明
-        ax.text(0.02, 0.98, '注：弯矩图画在受拉面', transform=ax.transAxes,
-               fontsize=9, verticalalignment='top')
+        ax.text(0.02, 0.02, '注：顺时针弯矩为正，弯矩图画在受拉面', transform=ax.transAxes,
+               fontsize=9, verticalalignment='bottom')
 
     def _plot_shear(self, ax: Axes) -> None:
         """

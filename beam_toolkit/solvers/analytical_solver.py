@@ -422,34 +422,43 @@ class AnalyticalSolver(SolverBase):
             if isinstance(load, PointLoad):
                 P = load.magnitude
                 a = load.position
-                R_left += P * (L - a) / L
-                R_right += P * a / L
+                # 向下荷载P为正值，反力向上为负值（平衡）
+                R_left -= P * (L - a) / L
+                R_right -= P * a / L
 
             elif isinstance(load, UniformDistributedLoad):
-                w = load.magnitude
+                w = load.magnitude  # 向下为正
                 a = load.start_position
                 b = load.end_position
                 load_length = b - a
                 equivalent_pos = a + load_length / 2
                 total_load = w * load_length
-                R_left += total_load * (L - equivalent_pos) / L
-                R_right += total_load * equivalent_pos / L
+                R_left -= total_load * (L - equivalent_pos) / L
+                R_right -= total_load * equivalent_pos / L
 
             elif isinstance(load, MomentLoad):
                 # 简支梁上作用的集中弯矩
                 M0 = load.magnitude
                 a = load.position
-                R_left += M0 / L
-                R_right -= M0 / L
+                # 顺时针弯矩（正值）产生的反力
+                R_left -= M0 / L
+                R_right += M0 / L
 
         self._reactions = {
-            'left': {'position': 0.0, 'reaction': R_left},
-            'right': {'position': L, 'reaction': R_right},
+            'left': {'position': 0.0, 'reaction': -R_left},  # 反力向上为正
+            'right': {'position': L, 'reaction': -R_right},
         }
 
-        # 计算内力和变形
+        # 计算内力和变形 - 使用改进的方法处理剪力突变
+        # 首先收集所有集中力作用点
+        point_load_positions = []
+        for load in self.beam.loads:
+            if isinstance(load, PointLoad):
+                point_load_positions.append(load.position)
+
+        # 计算每个位置的内力
         for i, xi in enumerate(self.x):
-            V, M, v, theta = self._calculate_simple_beam_internal(xi, L, EI, R_left)
+            V, M, v, theta = self._calculate_simple_beam_internal_improved(xi, L, EI, R_left, R_right)
             self._V[i] = V
             self._M[i] = M
             self._v[i] = v
@@ -499,6 +508,103 @@ class AnalyticalSolver(SolverBase):
 
         # 简化：使用标准边界条件处理
         # 实际上需要对每种荷载单独应用边界条件
+
+        return (V, M, v, theta)
+
+    def _calculate_simple_beam_internal_improved(self, x: float, L: float, EI: float, R_left: float, R_right: float) -> Tuple[float, float, float, float]:
+        """
+        改进的简支梁内力计算方法
+        正确处理集中力处的剪力突变
+
+        用户弯矩符号规则：顺时针弯矩为正（使梁上表面受拉）
+        对应于常规力学中的负弯矩
+
+        用户剪力符号规则：使截面顺时针转动的剪力为正
+
+        计算方法：
+        1. 用常规方法计算弯矩（下表面受拉为正）
+        2. 反转符号以符合用户规则（下表面受拉变为负）
+        """
+        # 反力大小（向上）
+        R_A = -R_left  # 转换为正值
+
+        # 常规剪力计算（向上力使截面产生负剪力）
+        V_conventional = -R_A
+        # 用户规则剪力：需要反转吗？向上力产生逆时针剪力 = 负值
+        V = V_conventional  # 保持一致
+
+        # 常规弯矩计算（下表面受拉为正）
+        # 对于 x < a: M = R_A * x（正值，下表面受拉）
+        # 对于 x > a: M = R_A * x - P * (x - a)
+        M_conventional = R_A * x
+
+        v = 0.0
+        theta = 0.0
+
+        # 逐个考虑荷载的影响
+        for load in self.beam.loads:
+            if isinstance(load, PointLoad):
+                P = load.magnitude  # 向下为正
+                a = load.position
+
+                # 集中力对剪力的影响：在作用点之后剪力有突变
+                if x > a:
+                    V += P  # 向下力使剪力增加（正值）
+                    M_conventional -= P * (x - a)  # 向下力减小常规弯矩
+
+                # 挠度计算
+                if x <= a:
+                    v += -P * (L - a) * x * (L**2 - (L-a)**2 - x**2) / (6 * EI * L)
+                    theta += -P * (L - a) * (L**2 - (L-a)**2 - 3*x**2) / (6 * EI * L)
+                else:
+                    v += -P * a * (L - x) * (L**2 - a**2 - (L-x)**2) / (6 * EI * L)
+                    theta += P * a * (L**2 - a**2 - 3*(L-x)**2) / (6 * EI * L)
+
+            elif isinstance(load, UniformDistributedLoad):
+                w = load.magnitude  # 向下为正
+                a = load.start_position
+                b = load.end_position
+
+                # 均布荷载对剪力和弯矩的影响
+                if a == 0 and b == L:
+                    # 全跨均布荷载
+                    V += w * x  # 向下荷载使剪力增加
+                    M_conventional -= w * x**2 / 2  # 减小常规弯矩
+
+                    # 挠度
+                    v += -w * x * (L**3 - 2*L*x**2 + x**3) / (24 * EI)
+                    theta += -w * (L**3 - 6*L*x**2 + 4*x**3) / (24 * EI)
+                else:
+                    # 部分均布荷载
+                    if x > a:
+                        if x <= b:
+                            V += w * (x - a)
+                            M_conventional -= w * (x - a)**2 / 2
+                        else:
+                            V += w * (b - a)
+                            M_conventional -= w * (b - a) * (x - a - (b - a)/2)
+
+            elif isinstance(load, MomentLoad):
+                M0 = load.magnitude  # 顺时针为正
+                a = load.position
+
+                # 集中弯矩的影响
+                if x > a:
+                    # 顺时针弯矩增加常规弯矩（但用户规则中，顺时针为正）
+                    M_conventional += M0
+
+                # 挠度计算
+                if x <= a:
+                    v += -M0 * x * (L - a) * (L**2 - x**2 - (L-a)**2) / (6 * EI * L)
+                    theta += -M0 * (L - a) * (L**2 - 3*x**2 - (L-a)**2) / (6 * EI * L)
+                else:
+                    v += M0 * (L - x) * a * (L**2 - (L-x)**2 - a**2) / (6 * EI * L)
+                    theta += M0 * a * (L**2 - 3*(L-x)**2 - a**2) / (6 * EI * L)
+
+        # 转换为用户规则的弯矩符号
+        # 用户规则：顺时针弯矩为正（上表面受拉）
+        # 常规弯矩（下表面受拉为正）需要反转
+        M = -M_conventional
 
         return (V, M, v, theta)
 
